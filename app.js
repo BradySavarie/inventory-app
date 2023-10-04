@@ -15,10 +15,10 @@ mongoose.set('strictQuery', false);
 const dev_db_uri =
     'mongodb+srv://BradySavarie:Robert1998@cluster0.zq27oze.mongodb.net/inventory_app?retryWrites=true&w=majority';
 const connectionString = process.env.MONGODB_URI || dev_db_uri;
+main().catch((err) => console.log(err));
 async function main() {
     await mongoose.connect(connectionString);
 }
-main.catch((err) => console.log(err));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

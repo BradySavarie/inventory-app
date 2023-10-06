@@ -5,6 +5,7 @@ const router = express.Router();
 const effect_controller = require('../controllers/effectController');
 const effectInstance_controller = require('../controllers/effectInstanceController');
 const manufacturer_controller = require('../controllers/manufacturerController');
+const category_controller = require('../controllers/categoryController');
 
 // EFFECT ROUTES //
 
@@ -78,27 +79,45 @@ router.post(
 );
 
 router.get(
-    '/manufacturer/delete',
+    '/manufacturer/:id/delete',
     manufacturer_controller.manufacturer_delete_get
 );
 
 router.post(
-    '/manufacturer/delete',
+    '/manufacturer/:id/delete',
     manufacturer_controller.manufacturer_delete_post
 );
 
 router.get(
-    '/manufacturer/update',
+    '/manufacturer/:id/update',
     manufacturer_controller.manufacturer_update_get
 );
 
 router.post(
-    '/manufacturer/update',
+    '/manufacturer/:id/update',
     manufacturer_controller.manufacturer_update_post
 );
 
 router.get('/manufacturer/:id', manufacturer_controller.manufacturer_detail);
 
 router.get('/manufacturers', manufacturer_controller.manufacturer_list);
+
+// CATEGORY ROUTES //
+
+router.get('/category/create', category_controller.category_create_get);
+
+router.post('/category/create', category_controller.category_create_post);
+
+router.get('/category/:id/delete', category_controller.category_delete_get);
+
+router.post('/category/:id/delete', category_controller.category_delete_post);
+
+router.get('/category/:id/update', category_controller.category_update_get);
+
+router.post('/category/:id/update', category_controller.category_update_post);
+
+router.get('/category/:id', category_controller.category_detail);
+
+router.get('/categories', category_controller.category_list);
 
 module.exports = router;

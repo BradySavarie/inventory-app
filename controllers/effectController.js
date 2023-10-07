@@ -52,5 +52,13 @@ exports.effect_detail = asyncHandler(async (req, res, next) => {
 });
 
 exports.effect_list = asyncHandler(async (req, res, next) => {
-    res.send('Effect list not yet implemented');
+    const allEffects = await Effect.find({}, 'model manufacturer')
+        .sort({ title: 1 })
+        .populate('manufacturer')
+        .exec();
+
+    res.render('effect_list', {
+        title: 'Effect List',
+        effect_list: allEffects,
+    });
 });

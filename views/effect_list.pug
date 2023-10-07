@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h1= title
+
+  ul
+    each effect in effect_list
+      li
+        a(href=effect.url) #{effect.model}
+        |  by #{effect.manufacturer.name}
+
+    else
+      li There are no effects.

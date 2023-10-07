@@ -1,8 +1,26 @@
 // require asyncHandler and models as needed
 const asyncHandler = require('express-async-handler');
+const Effect = require('../models/effect');
+const EffectInstance = require('../models/effectInstance');
+const Manufacturer = require('../models/manufacturer');
+const Category = require('../models/category');
 
 exports.index = asyncHandler(async (req, res, next) => {
-    res.send('Index not implemented yet');
+    const [numEffects, numEffectInstances, numManufacturers, numCategories] =
+        await Promise.all([
+            Effect.countDocuments({}).exec(),
+            EffectInstance.countDocuments({}).exec(),
+            Manufacturer.countDocuments({}).exec(),
+            Category.countDocuments({}).exec(),
+        ]);
+
+    res.render('index', {
+        title: 'Audio Effects Home',
+        effect_count: numEffects,
+        effect_instance_count: numEffectInstances,
+        manufacturer_count: numManufacturers,
+        category_count: numCategories,
+    });
 });
 
 exports.effect_create_get = asyncHandler(async (req, res, next) => {

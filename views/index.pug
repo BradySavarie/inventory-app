@@ -2,4 +2,14 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
+  p Welcome to #[em Audio Effects], a very basic Express website developed to practice creating an inventory application (with the help of MDN).
+
+  h1 Dynamic content
+
+  p The catalog has the following record counts:
+
+  ul
+    li #[strong Eooks:] !{effect_count}
+    li #[strong Effect Instances:] !{effect_instance_count}
+    li #[strong Manufacturers:] !{manufacturer_count}
+    li #[strong Categories:] !{category_count}

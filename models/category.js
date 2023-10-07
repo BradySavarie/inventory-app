@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const categorySchema = new Schema({
-    category: {
+    name: {
         type: String,
         required: true,
         enum: ['Boost', 'Overdrive', 'Distortion', 'Fuzz', 'Delay', 'Reverb'],

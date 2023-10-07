@@ -4,8 +4,12 @@ const Schema = mongoose.Schema;
 
 const effectSchema = new Schema({
     model: { type: String, required: true },
-    // manufacturer
-    // category
+    manufacturer: {
+        type: Schema.Types.ObjectId,
+        ref: 'Manufacturer',
+        required: true,
+    },
+    category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },
 });

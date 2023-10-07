@@ -6,7 +6,7 @@ const manufacturerSchema = new Schema({
     name: { type: String, required: true, minLength: 2, maxLength: 100 },
 });
 
-manufacturerSchema.virtual('url').length(function () {
+manufacturerSchema.virtual('url').get(function () {
     return `/catalog/manufacturer/${this.id}`;
 });
 

@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const helmet = require('helmet');
 const mongoose = require('mongoose');
 
 const indexRouter = require('./routes/index');
@@ -25,6 +26,13 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 app.use(logger('dev'));
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            'script-src': ["'self'", 'code.jquery.com', 'cdn.jsdelivr.net'],
+        },
+    })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

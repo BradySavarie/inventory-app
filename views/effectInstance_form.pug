@@ -1,0 +1,27 @@
+extends layout
+
+block content
+  h1=title
+
+  form(method='POST' action='')
+    div.form-group
+      label(for='effect') Effect:
+      select#effect.form-control(type='select' placeholder='Select effect' name='effect' required='true')
+        - effect_list.sort(function(a, b) {let textA = a.model.toUpperCase(); let textB = b.model.toUpperCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;});
+        for effect in effect_list
+          option(value=effect._id, selected=(selected_effect==effect._id.toString() ? 'selected' : false) ) #{effect.model}
+
+    div.form-group
+      label(for='condition') Condition:
+      select#condition.form-control(type='select' placeholder='Select condition' name='condition' required='true' )
+        option(value='Brand New' selected=(undefined===effectinstance || effectinstance.condition!='Brand New' ? false:'selected')) Brand New
+        option(value='Used - Like New' selected=(undefined===effectinstance || effectinstance.condition!='Used - Like New' ? false:'selected')) Used - Like New
+        option(value='Used - Light Wear' selected=(undefined===effectinstance || effectinstance.condition!='Used - Light Wear' ? false:'selected')) Used - Light Wear
+        option(value='Used - Heavy Wear' selected=(undefined===effectinstance || effectinstance.condition!='Used - Heavy Wear' ? false:'selected')) Used - Heavy Wear
+
+    button.btn.btn-primary(type='submit') Submit
+
+  if errors
+    ul
+      for error in errors
+        li!= error.msg

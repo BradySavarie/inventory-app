@@ -4,7 +4,12 @@ const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
 
 exports.effectInstance_create_get = asyncHandler(async (req, res, next) => {
-    res.send('Effect instance create get not yet implemented');
+    const allEffects = await Effect.find({}, 'model').exec();
+
+    res.render('effectInstance_form', {
+        title: 'Create EffectInstance',
+        effect_list: allEffects,
+    });
 });
 
 exports.effectInstance_create_post = asyncHandler(async (req, res, next) => {

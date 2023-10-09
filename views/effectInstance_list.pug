@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  h1= title
+
+  ul
+    each val in effectinstance_list
+      li
+        a(href=val.url) #{val.effect.model} - #{val.effect.manufacturer.name} 
+        if val.condition=='Brand New'
+          span.text-success (#{val.condition})
+        else if val.condition=='Used - Heavy Wear'
+          span.text-danger (#{val.condition})
+        else
+          span.text-warning (#{val.condition})
+
+    else
+      li There are no effect instances in this catalog.

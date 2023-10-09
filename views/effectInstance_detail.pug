@@ -1,0 +1,21 @@
+extends layout
+
+block content
+
+  h1 ID: #{effectinstance._id}
+
+  p #[strong Model:]
+    a(href=effectinstance.effect.url)  #{effectinstance.effect.model}
+
+  p #[strong Condition:]
+    if effectinstance.condition=='Brand New'
+      span.text-success  #{effectinstance.condition}
+    else if effectinstance.condition=='Used - Heavy Wear'
+      span.text-danger  #{effectinstance.condition}
+    else
+      span.text-warning  #{effectinstance.condition}
+  
+  p
+      a(href=effectinstance.url+'/update') Update Effect
+  p
+      a(href=effectinstance.url+'/delete') Delete Effect

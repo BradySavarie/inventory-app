@@ -1,0 +1,29 @@
+extends layout
+
+block content
+  h1 #{title}: #{effect.model}
+  p= effect.manufacturer.name
+
+  if effect_instances.length
+
+    p #[strong Delete the following effect instances before attempting to delete this effect.]
+
+    div(style='margin-left:20px;margin-top:20px')
+
+      h4 Effect Instances
+
+      dl
+      each effect in effect_instances
+        dt
+          a(href=effect.url) #{effect._id}
+        dd
+        
+
+  else
+    p Do you really want to delete this effect?
+
+    form(method='POST' action='')
+      div.form-group
+        input#effectid.form-control(type='hidden',name='effectid', required='true', value=effect._id )
+
+      button.btn.btn-primary(type='submit') Delete

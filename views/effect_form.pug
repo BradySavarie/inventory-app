@@ -1,0 +1,37 @@
+extends layout
+
+block content
+  h1= title
+
+  form(method='POST' action='')
+    div.form-group
+      label(for='model') Model:
+      input#model.form-control(type='text', placeholder='Name of effect' name='model' required='true' value=(undefined===effect ? '' : effect.model) )
+    div.form-group
+      label(for='manufacturer') Manufacturer:
+      select#manufacturer.form-control(type='select', placeholder='Select manufacturer' name='manufacturer' required='true' )
+        - manufacturers.sort(function(a, b) {let textA = a.name.toUpperCase(); let textB = b.name.toUpperCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;});
+        for manufacturer in manufacturers
+          if effect
+            option(value=manufacturer._id selected=(manufacturer._id.toString()===effect.manufacturer._id.toString() ? 'selected' : false) ) #{manufacturer.name}
+          else
+            option(value=manufacturer._id) #{manufacturer.name}
+    div.form-group
+      label(for='description') Description:
+      textarea#description.form-control(type='textarea', placeholder='Description' name='description' required='true') #{undefined===effect ? '' : effect.description}
+    div.form-group
+      label Category:
+      div
+        for category in categories
+          div(style='display: inline; padding-right:10px;')
+            input.checkbox-input(type='radio', name='category', id=category._id, value=category._id, checked=category.checked )
+            label(for=category._id) #{category.name}
+    div.form-group
+      label(for='price') Price:
+      input#price.form-control(type='number', placeholder='$' name='price' required='true' value=(undefined===effect ? '' : effect.price) )
+    button.btn.btn-primary(type='submit') Submit
+
+  if errors
+    ul
+      for error in errors
+        li!= error.msg

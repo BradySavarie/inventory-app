@@ -1,0 +1,30 @@
+extends layout
+
+block content
+  h1 Model: #{effect.model}
+
+  p #[strong Manufacturer:]
+    a(href=effect.manufacturer.url) #{effect.manufacturer.name}
+  p #[strong Description:] #{effect.description}
+  p #[strong Category:] #{effect.category.name} 
+
+  div(style='margin-left:20px;margin-top:20px')
+    h4 Instances
+
+    each val in effect_instances
+      hr
+      if val.condition=='Brand New' || val.condition=='Used - Like New'
+        p.text-success #{val._id}
+      else if val.condition=='Used - Heavy Wear'
+        p.text-danger #{val._id}
+      else
+        p.text-warning #{val._id}
+
+    else
+      p There are no instances of this effect in the library.
+
+    hr
+    p
+      a(href=effect.url+'/update') Update Effect
+    p
+      a(href=effect.url+'/delete') Delete Effect

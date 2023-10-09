@@ -4,6 +4,7 @@ const Effect = require('../models/effect');
 const EffectInstance = require('../models/effectInstance');
 const Manufacturer = require('../models/manufacturer');
 const Category = require('../models/category');
+const { body, validationResult } = require('express-validator');
 
 exports.index = asyncHandler(async (req, res, next) => {
     const [numEffects, numEffectInstances, numManufacturers, numCategories] =
@@ -24,15 +25,105 @@ exports.index = asyncHandler(async (req, res, next) => {
 });
 
 exports.effect_create_get = asyncHandler(async (req, res, next) => {
-    res.send('Effect create get not yet implemented');
+    const [allManufacturers, allCategories] = await Promise.all([
+        Manufacturer.find().exec(),
+        Category.find().exec(),
+    ]);
+
+    res.render('effect_form', {
+        title: 'Create Effect',
+        manufacturers: allManufacturers,
+        categories: allCategories,
+    });
 });
 
-exports.effect_create_post = asyncHandler(async (req, res, next) => {
-    res.send('Effect create post not yet implemented');
-});
+exports.effect_create_post = [
+    // Validate and sanitize fields.
+    body('model', 'Model must be greater than 1 character')
+        .trim()
+        .isLength({ min: 2 })
+        .escape(),
+    body('manufacturer', 'Manufacturer must not be empty.')
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+    body('category', 'Category must not be empty.')
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+    body('description', 'Description must not be empty')
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+    body('price').isNumeric().escape(),
+
+    // Process request after validation and sanitization.
+    asyncHandler(async (req, res, next) => {
+        // Extract the validation errors from a request.
+        const errors = validationResult(req);
+
+        // Create a Book object with escaped and trimmed data.
+        const effect = new Effect({
+            model: req.body.model,
+            manufacturer: req.body.manufacturer,
+            category: req.body.category,
+            description: req.body.description,
+            price: req.body.price,
+        });
+
+        if (!errors.isEmpty()) {
+            // There are errors. Render form again with sanitized values/error messages.
+
+            // Get all authors and genres for form.
+            const [allManufacturers, allCategories, effectCategory] =
+                await Promise.all([
+                    Manufacturer.find().exec(),
+                    Category.find().exec(),
+                    Category.findById(effect.category),
+                ]);
+
+            // Mark our selected genres as checked.
+            for (const category of allCategories) {
+                if (effectCategory.name === category.name) {
+                    category.checked = 'true';
+                }
+            }
+
+            console.log(allManufacturers);
+            res.render('effect_form', {
+                title: 'Create Effect',
+                manufacturers: allManufacturers,
+                categories: allCategories,
+                effect: effect,
+                errors: errors.array(),
+            });
+        } else {
+            // Data from form is valid. Save book.
+            await effect.save();
+            res.redirect(effect.url);
+        }
+    }),
+];
 
 exports.effect_delete_get = asyncHandler(async (req, res, next) => {
-    res.send('Effect delete get not yet implemented');
+    // Get details of book and all the book instances (in parallel)
+    const [effect, allInstancesOfEffect] = await Promise.all([
+        Effect.findById(req.params.id).populate('manufacturer').exec(),
+        EffectInstance.find({ effect: req.params.id })
+            .populate('effect')
+            .exec(),
+    ]);
+
+    if (effect === null) {
+        // No results.
+        res.redirect('/catalog/effects');
+    }
+
+    res.render('effect_delete', {
+        title: 'Delete Effect',
+        effect: effect,
+        effect_instances: allInstancesOfEffect,
+    });
 });
 
 exports.effect_delete_post = asyncHandler(async (req, res, next) => {
@@ -48,7 +139,25 @@ exports.effect_update_post = asyncHandler(async (req, res, next) => {
 });
 
 exports.effect_detail = asyncHandler(async (req, res, next) => {
-    res.send('Effect detail not yet implemented');
+    const [effect, effectInstances] = await Promise.all([
+        Effect.findById(req.params.id)
+            .populate('manufacturer')
+            .populate('category')
+            .exec(),
+        EffectInstance.find({ effect: req.params.id }).exec(),
+    ]);
+
+    if (effect === null) {
+        const err = new Error('Effect not found');
+        err.status = 404;
+        return next(err);
+    }
+
+    res.render('effect_detail', {
+        title: effect.title,
+        effect: effect,
+        effect_instances: effectInstances,
+    });
 });
 
 exports.effect_list = asyncHandler(async (req, res, next) => {

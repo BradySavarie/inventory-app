@@ -180,9 +180,78 @@ exports.effect_update_get = asyncHandler(async (req, res, next) => {
     });
 });
 
-exports.effect_update_post = asyncHandler(async (req, res, next) => {
-    res.send('Effect update post not yet implemented');
-});
+exports.effect_update_post = [
+    // Validate and sanitize fields.
+    body('model', 'Model must be greater than 1 character')
+        .trim()
+        .isLength({ min: 2 })
+        .escape(),
+    body('manufacturer', 'Manufacturer must not be empty.')
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+    body('category', 'Category must not be empty.')
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+    body('description', 'Description must not be empty')
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+    body('price').isNumeric().escape(),
+
+    // Process request after validation and sanitization.
+    asyncHandler(async (req, res, next) => {
+        // Extract the validation errors from a request.
+        const errors = validationResult(req);
+
+        // Create a Effect object with escaped and trimmed data.
+        const effect = new Effect({
+            model: req.body.model,
+            manufacturer: req.body.manufacturer,
+            category: req.body.category,
+            description: req.body.description,
+            price: req.body.price,
+            _id: req.params.id,
+        });
+
+        if (!errors.isEmpty()) {
+            // There are errors. Render form again with sanitized values/error messages.
+
+            // Get all manufacturers and categories for form.
+            const [allManufacturers, allCategories, effectCategory] =
+                await Promise.all([
+                    Manufacturer.find().exec(),
+                    Category.find().exec(),
+                    Category.findById(effect.category),
+                ]);
+
+            // Mark our selected categories as checked.
+            for (const category of allCategories) {
+                if (effectCategory.name === category.name) {
+                    category.checked = 'true';
+                }
+            }
+
+            res.render('effect_form', {
+                title: 'Update Effect',
+                manufacturers: allManufacturers,
+                categories: allCategories,
+                effect: effect,
+                errors: errors.array(),
+            });
+        } else {
+            // Data from form is valid. Update the record.
+            const updatedEffect = await Effect.findByIdAndUpdate(
+                req.params.id,
+                effect,
+                {}
+            );
+            // Redirect to book detail page.
+            res.redirect(updatedEffect.url);
+        }
+    }),
+];
 
 exports.effect_detail = asyncHandler(async (req, res, next) => {
     const [effect, effectInstances] = await Promise.all([

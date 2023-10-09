@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h1 #{title}: #{effectinstance.effect.model}
+  p= effectinstance.effect.manufacturer.name
+
+  p Do you really want to delete this Effect Instance?
+
+  form(method='POST' action='')
+    div.form-group
+    input#effectInstanceid.form-control(type='hidden',name='effectinstanceid', required='true', value=effectinstance._id )
+
+    button.btn.btn-primary(type='submit') Delete

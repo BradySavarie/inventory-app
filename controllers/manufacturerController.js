@@ -70,12 +70,42 @@ exports.manufacturer_delete_post = asyncHandler(async (req, res, next) => {
 });
 
 exports.manufacturer_update_get = asyncHandler(async (req, res, next) => {
-    res.send('Manufacturer update get not yet implemented');
+    const manufacturer = await Manufacturer.findById(req.params.id).exec();
+
+    res.render('manufacturer_form', {
+        title: 'Update Manufacturer',
+        manufacturer: manufacturer,
+    });
 });
 
-exports.manufacturer_update_post = asyncHandler(async (req, res, next) => {
-    res.send('Manufacturer update post not yet implemented');
-});
+exports.manufacturer_update_post = [
+    body('name', 'Name must be specified').trim().isLength({ min: 1 }).escape(),
+
+    asyncHandler(async (req, res, next) => {
+        const errors = validationResult(req);
+
+        const manufacturer = new Manufacturer({
+            name: req.body.name,
+            _id: req.params.id,
+        });
+
+        if (!errors.isEmpty()) {
+            res.render('manufacturer_form', {
+                title: 'Update Manufacturer',
+                manufacturer: manufacturer,
+                errors: errors.array(),
+            });
+            return;
+        } else {
+            const updatedManufacturer = await Manufacturer.findByIdAndUpdate(
+                req.params.id,
+                manufacturer,
+                {}
+            ).exec();
+            res.redirect(manufacturer.url);
+        }
+    }),
+];
 
 exports.manufacturer_detail = asyncHandler(async (req, res, next) => {
     const [manufacturer, allEffectsByManufacturer] = await Promise.all([

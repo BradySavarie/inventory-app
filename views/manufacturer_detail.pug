@@ -1,0 +1,22 @@
+extends layout
+
+block content
+
+  h1 Manufacturer: #{manufacturer.name}
+
+  div(style='margin-left:20px;margin-top:20px')
+
+    h4 Effects
+
+    dl
+      each effect in manufacturer_effects
+        dt
+          a(href=effect.url) #{effect.model}
+        dd #{effect.description}
+
+      else
+        p This manufacturer has no effects.
+
+  hr
+  p
+    a(href=manufacturer.url+'/delete') Delete manufacturer

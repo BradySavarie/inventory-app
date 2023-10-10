@@ -1,0 +1,27 @@
+extends layout
+
+block content
+  h1 #{title}: #{manufacturer.name}
+
+  if manufacturer_effects.length
+
+    p #[strong Delete the following effect before attempting to delete this manufacturer.]
+
+    div(style='margin-left:20px;margin-top:20px')
+
+      h4 Effects
+
+      dl
+      each effect in manufacturer_effects
+        dt
+          a(href=manufacturer.url) #{effect.model}
+        dd #{effect.description}
+
+  else
+    p Do you really want to delete this Manufacturer?
+
+    form(method='POST' action='')
+      div.form-group
+        input#manufacturerid.form-control(type='hidden',name='manufacturerid', required='true', value=manufacturer._id )
+
+      button.btn.btn-primary(type='submit') Delete

@@ -6,8 +6,6 @@ const categorySchema = new Schema({
     name: {
         type: String,
         required: true,
-        enum: ['Boost', 'Overdrive', 'Distortion', 'Fuzz', 'Delay', 'Reverb'],
-        default: 'Boost',
     },
 });
 
